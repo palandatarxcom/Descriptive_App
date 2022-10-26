@@ -31,7 +31,11 @@ mod_dataview_server <- function(id) {
       query <- parseQueryString(session$clientData$url_search)
       if (!is.null(query[['access']])) {
         # dataset$path <- base64_urldecode(query[['access']])
+        # L1VzZXJzL2xpbnlvbmcvRG93bmxvYWRzL2xpbmVsaXN0X2NsZWFuZWQucmRz
+        # decode -> /var/data/...../.csv
         dataset$data <- readRDS(base64_urldecode(query[['access']]))
+        # read a data.frame from disk
+        # dataset$data <- read.cvs / vroom::read() / arrow::feather()
       }
     })
 

@@ -11,6 +11,7 @@ library(shiny)
 library(dplyr)
 library(DT)
 library(explore)
+library(base64url)
 
 source("mod_dataview.R")
 source("mod_varselection.R")
@@ -44,6 +45,10 @@ app_ui <- function(request) {
   )
 }
 
+# https://www.datarx.cn:33789/shiny/tableone?access=L1VzZXJzL2xpbnlvbmcvRG93bmxvYWRzL2xpbmVsaXN0X2NsZWFuZWQucmRz
+# https://www.datarx.cn:33789/shiny/regression
+# # https://www.datarx.cn:33789/shiny/psm
+#
 #sample dataset path: L1VzZXJzL2xpbnlvbmcvRG93bmxvYWRzL2xpbmVsaXN0X2NsZWFuZWQucmRz
 #"/Users/linyong/Downloads/linelist_cleaned.rds"
 app_server <- function(input, output, session) {
