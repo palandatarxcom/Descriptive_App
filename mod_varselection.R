@@ -25,5 +25,7 @@ mod_varselection_server <- function(id, dat) {
     output$table <- renderTable({
       head(dat())
     })
+
+    return(reactive(dat()))
   })
 }

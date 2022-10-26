@@ -11,7 +11,6 @@ library(shiny)
 library(dplyr)
 library(DT)
 library(explore)
-library(base64url)
 
 source("mod_dataview.R")
 source("mod_varselection.R")
@@ -45,16 +44,18 @@ app_ui <- function(request) {
   )
 }
 
-# https://www.datarx.cn:33789/shiny/tableone?access=L1VzZXJzL2xpbnlvbmcvRG93bmxvYWRzL2xpbmVsaXN0X2NsZWFuZWQucmRz
-# https://www.datarx.cn:33789/shiny/regression
-# # https://www.datarx.cn:33789/shiny/psm
 #
-#sample dataset path: L1VzZXJzL2xpbnlvbmcvRG93bmxvYWRzL2xpbmVsaXN0X2NsZWFuZWQucmRz
-#"/Users/linyong/Downloads/linelist_cleaned.rds"
+# for local testing only:
+# - encode the local sample data, in command line: echo "<location>" | tr -d "\n" | base64
+# - put the encode string in the URL: http://127.0.0.1:7382/?access=<encode_location>
+#
+# encoded sample data file location: L1VzZXJzL2xpbnlvbmcvRG93bmxvYWRzL3RhYmxlMS5jc3Y=
+# original sample data file: /Users/linyong/Downloads/table1.csv
+#
 app_server <- function(input, output, session) {
-  dataset <- mod_dataview_server("dataview")
-  mod_varselection_server("varselection", dat=dataset)
-  mod_filtering_server("filtering")
+  raw_dataset <- mod_dataview_server("dataview")
+  varselected_dataset <- mod_varselection_server("varselection", dat=raw_dataset)
+  mod_filtering_server("filtering", dat=varselected_dataset)
   mod_subgroup_server("subgroup")
   mod_gentableone_server("gentableone")
 }
