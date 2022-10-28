@@ -32,16 +32,18 @@ mod_dataview_server <- function(id) {
       if (!is.null(query[['access']])) {
         # use vroom to read a data file from a specified URL
         dataset$path <- base64url::base64_urldecode(query[['access']])
-        dataset$data <- vroom::vroom(base64url::base64_urldecode(query[['access']]))
+        dataset$data <- vroom::vroom(base64url::base64_urldecode(query[['access']]), show_col_types = FALSE)
       }
     })
 
 
     output$describe_all <- DT::renderDT({
+      if(!is.null(dataset$data)) {
       DT::datatable(data = dataset$data %>% explore::describe(out = "text"),
                     rownames = FALSE,
                     selection = 'none',
                     options = list(pageLength = 15))
+      }
     }) # render summary
 
     output$view <- DT::renderDT({
