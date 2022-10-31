@@ -12,12 +12,6 @@ library(dplyr)
 library(DT)
 library(explore)
 
-source("mod_dataview.R")
-source("mod_varselection.R")
-source("mod_filtering.R")
-source("mod_subgroup.R")
-source("mod_gentableone.R")
-
 # Define UI for application that draws a histogram
 app_ui <- function(request) {
   page1 <- mod_dataview_ui("dataview")
