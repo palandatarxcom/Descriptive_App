@@ -43,7 +43,7 @@ mod_varselection_server <- function(id, dat) {
     #     data = dat())
     # })
 
-    observe({
+    observeEvent(dat(), {
         updateVarSelectInput(
           session,
           "variables",
@@ -51,9 +51,9 @@ mod_varselection_server <- function(id, dat) {
     })
 
     output$data <- renderTable({
-      if (length(input$variables) == 0) return(dat())
+      if (length(input$variables) == 0) return(head(dat()))
       dataset$data <- dat() %>% dplyr::select(!!!input$variables)
-      return(dataset$data)
+      return(head(dataset$data))
     }, rownames = TRUE, striped = TRUE)
 
     return(reactive(dataset$data))
