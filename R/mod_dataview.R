@@ -11,11 +11,26 @@ mod_dataview_ui <- function(id){
   ns <- NS(id)
   tagList(
     titlePanel("浏览数据集"),
-    shiny::br(),
-    DT::DTOutput(ns("view")),
-    shiny::h2("Data Summary"),
-    DT::DTOutput(ns("describe_all")),
+
+    sidebarLayout(
+      sidebarPanel(
+        varSelectInput(ns("variables"), "Variable:", NULL, multiple = TRUE)
+      ),
+      mainPanel(
+        shiny::h2("数据集"),
+        DT::DTOutput(ns("view")),
+        shiny::h2("简单统计"),
+        DT::DTOutput(ns("describe_all")),
+      )
+    )
   )
+}
+
+show_DT_table <- function(dat) {
+  DT::datatable(data = dat,
+                rownames = FALSE,
+                selection = 'none',
+                options = list(pageLength = 15, scrollX = TRUE))
 }
 
 #' dataview Server Functions
@@ -36,23 +51,26 @@ mod_dataview_server <- function(id) {
       }
     })
 
+    observeEvent(dataset$data, {
+      updateVarSelectInput(
+        session,
+        "variables",
+        data = dataset$data)
+    })
 
     output$describe_all <- DT::renderDT({
-      if(!is.null(dataset$data)) {
-      DT::datatable(data = dataset$data %>% explore::describe(out = "text"),
-                    rownames = FALSE,
-                    selection = 'none',
-                    options = list(pageLength = 15))
-      }
+      if(!is.null(dataset$data))
+        show_DT_table(dataset$data %>% explore::describe(out = "text"))
     }) # render summary
 
     output$view <- DT::renderDT({
-      DT::datatable(data = dataset$data,
-                    rownames = FALSE,
-                    selection = 'none',
-                    options = list(pageLength = 15, scrollX = TRUE))
+      if (length(input$variables) == 0)
+        return(show_DT_table(dataset$data))
+
+      dataset$selected <- dataset$data %>% dplyr::select(!!!input$variables)
+      return(show_DT_table(dataset$selected))
     }) # render data table
 
-    return(reactive(dataset$data))
+    return(reactive(dataset$selected))
   })
 }
