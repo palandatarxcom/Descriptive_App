@@ -20,7 +20,7 @@ mod_varselection_ui <- function(id){
       ),
 
       mainPanel(
-        tableOutput(ns("data"))
+        dataTableOutput(ns("data"))
       )
     )
   )
@@ -50,11 +50,11 @@ mod_varselection_server <- function(id, dat) {
           data = dat())
     })
 
-    output$data <- renderTable({
-      if (length(input$variables) == 0) return(head(dat()))
+    output$data <- renderDataTable({
+      if (length(input$variables) == 0) return(dat())
       dataset$data <- dat() %>% dplyr::select(!!!input$variables)
-      return(head(dataset$data))
-    }, rownames = TRUE, striped = TRUE)
+      return(dataset$data)
+    }, rownames = TRUE)
 
     return(reactive(dataset$data))
   })

@@ -65,9 +65,11 @@ mod_dataview_server <- function(id) {
 
     output$view <- DT::renderDT({
       if (length(input$variables) == 0)
-        return(show_DT_table(dataset$data))
+        # return(show_DT_table(dataset$data))
+        dataset$selected <- dataset$data
+      else
+        dataset$selected <- dataset$data %>% dplyr::select(!!!input$variables)
 
-      dataset$selected <- dataset$data %>% dplyr::select(!!!input$variables)
       return(show_DT_table(dataset$selected))
     }) # render data table
 
