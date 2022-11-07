@@ -20,7 +20,9 @@ mod_varselection_ui <- function(id){
       ),
 
       mainPanel(
-        dataTableOutput(ns("data"))
+        # dataTableOutput(ns("data")),
+        verbatimTextOutput(ns("summary")),
+        plotOutput(ns("ggpairs"))
       )
     )
   )
@@ -50,11 +52,27 @@ mod_varselection_server <- function(id, dat) {
           data = dat())
     })
 
-    output$data <- renderDataTable({
-      if (length(input$variables) == 0) return(dat())
-      dataset$data <- dat() %>% dplyr::select(!!!input$variables)
-      return(dataset$data)
-    }, rownames = TRUE)
+
+    # output$data <- renderDataTable({
+    #   if (length(input$variables) == 0)
+    #     dataset$selected <- dat()
+    #   else
+    #     dataset$selected <- dat() %>% dplyr::select(!!!input$variables)
+    #
+    #   return(dataset$selected)
+    # }, rownames = TRUE)
+
+    output$summary <- renderPrint(str(dat()))
+
+    output$ggpairs <- renderPlot({
+      if (length(input$variables) == 0)
+        dataset$selected <- dat()
+      else
+        dataset$selected <- dat() %>% dplyr::select(!!!input$variables)
+
+      # return(dataset$selected)
+      ggpairs(dataset$selected)
+    })
 
     return(reactive(dataset$data))
   })

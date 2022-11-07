@@ -6,6 +6,7 @@ library(shiny)
 library(dplyr)
 library(DT)
 library(explore)
+library(GGally)
 
 # Define UI for application that draws a histogram
 app_ui <- function(request) {
