@@ -4,7 +4,8 @@ box::use(
 
 box::use(
   dataview = app/view/page_dataview[dataview_ui, dataview_server],
-  varselection = app/view/page_varselection[varselection_ui, varselection_server]
+  varselection = app/view/page_varselection[varselection_ui, varselection_server],
+  filtering = app/view/page_filtering[filtering_ui, filtering_server]
 )
 
 #
@@ -41,8 +42,8 @@ box::use(
 ui <- function(id) {
   ns <- NS(id)
   page1 <- dataview_ui (ns("dataview"))
-  page2 <- varselection_ui(ns("varselection"))
-  # page3 <- mod_filtering_ui("filtering")
+  page2 <- filtering_ui(ns("filtering"))
+  page3 <- varselection_ui(ns("varselection"))
   # page4 <- mod_subgroup_ui("subgroup")
   # page5 <- mod_gentableone_ui("gentableone")
 
@@ -50,8 +51,8 @@ ui <- function(id) {
     navbarPage(
       "描述性分析（Table One）",
       tabPanel("数据浏览", page1),
-      tabPanel("选择字段", page2),
-      tabPanel("筛选字段", "page3"),
+      tabPanel("筛选字段", page2),
+      tabPanel("选择字段", page3),
       tabPanel("调整亚组", "page4"),
       tabPanel("生成基线表", "page5"),
       navbarMenu(
@@ -69,9 +70,9 @@ server <- function(id) {
   moduleServer(
     id,
     function(input, output, session) {
-      raw_dataset <- dataview_server("dataview")
+      raw_dataset <- dataview_server("dataview") #select variables
+      filtering_server("filtering", dat=raw_dataset) # filtering
       varselected_dataset <- varselection_server("varselection", dat=raw_dataset)
-      # mod_filtering_server("filtering", dat=varselected_dataset)
       # mod_subgroup_server("subgroup")
       # mod_gentableone_server("gentableone")
   })

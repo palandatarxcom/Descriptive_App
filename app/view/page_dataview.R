@@ -21,7 +21,7 @@
 
 box::use(
   shiny = shiny[...],
-  DT = DT[DTOutput, ...],
+  DT = DT[...],
   base64url = base64url[base64_urldecode, ...],
   vroom = vroom[vroom, ...],
   dplyr = dplyr[select, ...],

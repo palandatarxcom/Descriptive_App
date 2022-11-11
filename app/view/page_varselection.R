@@ -69,16 +69,6 @@ varselection_server <- function(id, dat) {
           data = dat())
     })
 
-
-    # output$data <- renderDataTable({
-    #   if (length(input$variables) == 0)
-    #     dataset$selected <- dat()
-    #   else
-    #     dataset$selected <- dat() %>% dplyr::select(!!!input$variables)
-    #
-    #   return(dataset$selected)
-    # }, rownames = TRUE)
-
     output$summary <- renderPrint(str(dat()))
 
     output$ggpairs <- renderPlot({
@@ -90,6 +80,6 @@ varselection_server <- function(id, dat) {
       ggpairs(dataset$selected)
     })
 
-    return(reactive(dataset$data))
+    return(reactive(dataset$selected))
   })
 }
