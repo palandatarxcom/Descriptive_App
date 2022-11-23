@@ -41,7 +41,7 @@ box::use(
 #' @export
 ui <- function(id) {
   ns <- NS(id)
-  page1 <- dataview_ui (ns("dataview"))
+  page1 <- dataview_ui(ns("dataview"))
   page2 <- filtering_ui(ns("filtering"))
   page3 <- varselection_ui(ns("varselection"))
   # page4 <- mod_subgroup_ui("subgroup")

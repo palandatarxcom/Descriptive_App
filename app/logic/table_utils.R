@@ -28,11 +28,12 @@ box::use(
 show_DT_table <- function(dat) {
   DT$datatable(data = dat,
                 rownames = FALSE,
-                selection = 'none',
+                selection = "none",
                 options = list(pageLength = 15, scrollX = TRUE))
 }
 
 #' @export
+# prep a new data.frame with more diverse data types
 preprocess_df <- function(df) {
   df |>
     mutate_if(~is.character(.) && length(unique(.)) <= 25, as.factor) |>

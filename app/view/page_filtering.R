@@ -30,7 +30,7 @@ box::use(
 
 
 #' @export
-filtering_ui <- function(id){
+filtering_ui <- function(id) {
   ns <- NS(id)
   tagList(
     shiny::h2("Data Summary"),
@@ -39,8 +39,8 @@ filtering_ui <- function(id){
 }
 
 #' @export
-filtering_server <- function(id, dat){
-  moduleServer(id, function(input, output, session){
+filtering_server <- function(id, dat) {
+  moduleServer(id, function(input, output, session) {
     ns <- session$ns
     output$describe_all <- DT$renderDT({
       show_DT_table(dat())

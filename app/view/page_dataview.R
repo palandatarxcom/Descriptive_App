@@ -35,7 +35,7 @@ box::use(
 
 
 #' @export
-dataview_ui <- function(id){
+dataview_ui <- function(id) {
   ns <- NS(id)
   tagList(
     titlePanel("浏览数据集"),
@@ -64,11 +64,11 @@ dataview_server <- function(id) {
 
     observe({
       query <- parseQueryString(session$clientData$url_search)
-      if (!is.null(query[['access']])) {
+      if (!is.null(query[["access"]])) {
         # use vroom to read a data file from a specified URL
-        dataset$path <- base64url$base64_urldecode(query[['access']])
+        dataset$path <- base64url$base64_urldecode(query[["access"]])
         dataset$data <- preprocess_df(
-                          vroom$vroom(base64url$base64_urldecode(query[['access']]),
+                          vroom$vroom(base64url$base64_urldecode(query[["access"]]),
                                   show_col_types = FALSE)
                       )
       }
@@ -82,7 +82,7 @@ dataview_server <- function(id) {
     })
 
     output$describe_all <- DT$renderDT({
-      if(!is.null(dataset$data))
+      if (!is.null(dataset$data))
         show_DT_table(dataset$data |> explore$describe(out = "text"))
     }) # render summary
 
@@ -92,7 +92,7 @@ dataview_server <- function(id) {
       else
         dataset$selected <- dataset$data %>% dplyr$select(!!!input$variables)
 
-      if(!is.null(dataset$selected))
+      if (!is.null(dataset$selected))
         show_DT_table(dataset$selected)
     }) # render data table
 

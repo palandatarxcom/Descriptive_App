@@ -29,7 +29,7 @@ box::use(
 global_data <- reactiveVal(NULL)
 
 #' @export
-varselection_ui <- function(id){
+varselection_ui <- function(id) {
   ns <- NS(id)
   tagList(
     titlePanel("选择变量"),
