@@ -40,20 +40,32 @@ dataview_ui <- function(id){
   ns <- NS(id)
   tagList(
     titlePanel("浏览数据集"),
-
-    sidebarLayout(
-      sidebarPanel(
-        # varSelectInput(ns("variables"), "Variable:", NULL, multiple = TRUE)
-      ),
-      mainPanel(
+    p("blah, blah, blah"),
+    # sidebarLayout(
+    #   sidebarPanel(
+    #     # varSelectInput(ns("variables"), "Variable:", NULL, multiple = TRUE)
+    #   ),
+    #   mainPanel(
         h3("数据集描述"),
-        DT$DTOutput(ns("describe_all")),
+        div(id = "dv_statistic",
+            wellPanel(
+              DT$DTOutput(ns("describe_all"))
+            )
+        ),
         h3("数据集更新"),
-        datamods$update_variables_ui(id = ns("update"), title = NULL),
+        div(id = "dv_update_variable",
+            wellPanel(
+              datamods$update_variables_ui(id = ns("update"), title = NULL)
+            )
+        ),
         h3("数据预览"),
-        DT$DTOutput(ns("view")),
-      )
-    )
+        div(id = "dv_preview",
+            wellPanel(
+              DT$DTOutput(ns("view"))
+            )
+        ),
+      # )
+    # )
   )
 
 }

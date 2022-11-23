@@ -53,13 +53,16 @@ ui <- function(id) {
   # page5 <- mod_gentableone_ui("gentableone")
 
   tagList(
+    tags$link(rel="stylesheet", href="static/css/styles.css", type="text/css"),
+    tags$link(rel="stylesheet", href="static/css/yeti.css", type="text/css"),
+
     navbarPage(
       "描述性分析（Table One）",
-      tabPanel("数据浏览", page1),
-      tabPanel("筛选字段", page2),
-      tabPanel("选择字段", page3),
-      tabPanel("调整亚组", "page4"),
-      tabPanel("生成基线表", "page5"),
+      tabPanel("数据集浏览和调整", page1),
+      tabPanel("筛选行记录", page2),
+      tabPanel("分析变量关系", page3),
+      tabPanel("调整亚组", "调整亚组"),
+      tabPanel("生成基线表", "生成基线表"),
       navbarMenu(
         "more",
         tabPanel("panel 4a", "four-a"),
