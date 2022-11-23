@@ -37,6 +37,11 @@ box::use(
 ## ---------------------------
 
 
+box::use(
+  datamods = datamods[set_i18n,...]
+)
+
+datamods$set_i18n("cn")
 
 #' @export
 ui <- function(id) {

@@ -25,7 +25,8 @@ box::use(
   base64url = base64url[base64_urldecode, ...],
   vroom = vroom[vroom, ...],
   dplyr = dplyr[select, ...],
-  explore = explore[describe, ...]
+  explore = explore[describe, ...],
+  datamods = datamods[...]
 )
 
 
@@ -35,23 +36,26 @@ box::use(
 
 
 #' @export
-dataview_ui <- function(id) {
+dataview_ui <- function(id){
   ns <- NS(id)
   tagList(
     titlePanel("浏览数据集"),
 
     sidebarLayout(
       sidebarPanel(
-        varSelectInput(ns("variables"), "Variable:", NULL, multiple = TRUE)
+        # varSelectInput(ns("variables"), "Variable:", NULL, multiple = TRUE)
       ),
       mainPanel(
-        h2("数据集"),
-        DT$DTOutput(ns("view")),
-        h2("简单统计"),
+        h3("数据集描述"),
         DT$DTOutput(ns("describe_all")),
+        h3("数据集更新"),
+        datamods$update_variables_ui(id = ns("update"), title = NULL),
+        h3("数据预览"),
+        DT$DTOutput(ns("view")),
       )
     )
   )
+
 }
 
 
@@ -60,7 +64,7 @@ dataview_server <- function(id) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
-    dataset <- reactiveValues()
+    dataset <- reactiveValues(data = NULL)
 
     observe({
       query <- parseQueryString(session$clientData$url_search)
@@ -71,29 +75,43 @@ dataview_server <- function(id) {
                           vroom$vroom(base64url$base64_urldecode(query[["access"]]),
                                   show_col_types = FALSE)
                       )
+        dataset$selected <- dataset$data
       }
     })
 
-    observeEvent(dataset$data, {
-      updateVarSelectInput(
-        session,
-        "variables",
-        data = dataset$data)
-    })
+    # observeEvent(dataset$data, {
+    #   updateVarSelectInput(
+    #     session,
+    #     "variables",
+    #     data = dataset$data)
+    # })
 
     output$describe_all <- DT$renderDT({
-      if (!is.null(dataset$data))
-        show_DT_table(dataset$data |> explore$describe(out = "text"))
+      data <- req(dataset$selected)
+
+      # if(!is.null(dataset$data))
+        show_DT_table(dataset$selected |> explore$describe(out = "text"))
     }) # render summary
 
-    output$view <- DT$renderDT({
-      if (length(input$variables) == 0)
-        dataset$selected <- dataset$data
-      else
-        dataset$selected <- dataset$data %>% dplyr$select(!!!input$variables)
+    updated_data <- update_variables_server(
+      id = "update",
+      data = reactive(dataset$data),
+      height = "300px"
+    ) # update and select variables
 
-      if (!is.null(dataset$selected))
-        show_DT_table(dataset$selected)
+    observeEvent(updated_data(), {
+      dataset$selected <- updated_data()
+    })
+
+    output$view <- DT$renderDT({
+      # if (length(input$variables) == 0)
+      #   dataset$selected <- dataset$data
+      # else
+      #   dataset$selected <- dataset$data %>% dplyr$select(!!!input$variables)
+
+      data <- req(dataset$selected)
+      # if(!is.null(dataset$selected))
+        show_DT_table(data)
     }) # render data table
 
     return(reactive(dataset$selected))
