@@ -21,12 +21,12 @@
 
 box::use(
   shiny = shiny[...],
-  DT = DT[...],
+  DT = DT[DTOutput, renderDT, ...],
   base64url = base64url[base64_urldecode, ...],
   vroom = vroom[vroom, ...],
   dplyr = dplyr[select, ...],
   explore = explore[describe, ...],
-  datamods = datamods[...]
+  datamods = datamods[update_variables_ui, ...]
 )
 
 
@@ -49,19 +49,19 @@ dataview_ui <- function(id){
         h3("数据集描述"),
         div(id = "dv_statistic",
             wellPanel(
-              DT$DTOutput(ns("describe_all"))
+              DTOutput(ns("describe_all"))
             )
         ),
         h3("数据集更新"),
         div(id = "dv_update_variable",
             wellPanel(
-              datamods$update_variables_ui(id = ns("update"), title = NULL)
+              update_variables_ui(id = ns("update"), title = NULL)
             )
         ),
         h3("数据预览"),
         div(id = "dv_preview",
             wellPanel(
-              DT$DTOutput(ns("view"))
+              DTOutput(ns("view"))
             )
         ),
       # )
@@ -84,7 +84,7 @@ dataview_server <- function(id) {
         # use vroom to read a data file from a specified URL
         dataset$path <- base64url$base64_urldecode(query[["access"]])
         dataset$data <- preprocess_df(
-                          vroom$vroom(base64url$base64_urldecode(query[["access"]]),
+                          vroom(base64url$base64_urldecode(query[["access"]]),
                                   show_col_types = FALSE)
                       )
         dataset$selected <- dataset$data
@@ -98,11 +98,11 @@ dataview_server <- function(id) {
     #     data = dataset$data)
     # })
 
-    output$describe_all <- DT$renderDT({
+    output$describe_all <- renderDT({
       data <- req(dataset$selected)
 
       # if(!is.null(dataset$data))
-        show_DT_table(dataset$selected |> explore$describe(out = "text"))
+        show_DT_table(dataset$selected |> describe(out = "text"))
     }) # render summary
 
     updated_data <- update_variables_server(
@@ -115,7 +115,7 @@ dataview_server <- function(id) {
       dataset$selected <- updated_data()
     })
 
-    output$view <- DT$renderDT({
+    output$view <- renderDT({
       # if (length(input$variables) == 0)
       #   dataset$selected <- dataset$data
       # else

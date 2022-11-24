@@ -75,7 +75,7 @@ varselection_server <- function(id, dat) {
       if (length(input$variables) == 0)
         dataset$selected <- dat()
       else
-        dataset$selected <- dat() %>% dplyr$select(!!!input$variables)
+        dataset$selected <- dat() |> select(!!!input$variables)
 
       ggpairs(dataset$selected)
     })
