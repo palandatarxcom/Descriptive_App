@@ -21,11 +21,9 @@
 box::use(
   DT = DT[datatable, DTOutput, ...],
   dplyr = dplyr[select, ...],
-  shiny = shiny[...]
-)
-
-box::use(
-  app/logic/table_utils[show_DT_table, ...]
+  shiny = shiny[...],
+  shinyDataFilter = shinyDataFilter[shiny_data_filter, shiny_data_filter_ui, ...],
+  utils = utils[capture.output, ...]
 )
 
 
@@ -33,8 +31,19 @@ box::use(
 filtering_ui <- function(id) {
   ns <- NS(id)
   tagList(
-    shiny::h2("Data Summary"),
-    DT$DTOutput(ns("describe_all"))
+    shiny::h2("筛选数据"),
+    fluidRow(
+      column(8,
+        div(id = "dv_statistic",
+           wellPanel(
+             dataTableOutput(ns("data_summary")),
+           )
+        ),
+
+        verbatimTextOutput(ns("data_filter_code"))
+      ),
+      column(4, shiny_data_filter_ui(ns("data_filter")))
+    )
   )
 }
 
@@ -42,9 +51,34 @@ filtering_ui <- function(id) {
 filtering_server <- function(id, dat) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
-    output$describe_all <- DT$renderDT({
-      show_DT_table(dat())
-    }) # render summary
-    return(dat)
+
+    filtered_data <- callModule(
+      shiny_data_filter,
+      "data_filter",
+      data = dat,
+      # choices = ,
+      verbose = FALSE
+    )
+
+    output$data_filter_code <- renderPrint({
+      cat(gsub("%>%", "%>% \n ",
+               gsub("\\s{2,}", " ",
+                    paste0(
+                      capture.output(attr(filtered_data(), "code")),
+                      collapse = " "))
+      ))
+    })
+
+    output$data_summary <- renderDataTable(
+      {
+      filtered_data()
+      },
+      options = list(
+        scrollX = TRUE,
+        pageLength = 10
+      )
+    )
+
+    return(filtered_data)
   })
 }

@@ -4,7 +4,7 @@ box::use(
 
 box::use(
   dataview = app/view/page_dataview[dataview_ui, dataview_server],
-  varselection = app/view/page_varselection[varselection_ui, varselection_server],
+  varexplore = app/view/page_varexplore[varexplore_ui, varexplore_server],
   filtering = app/view/page_filtering[filtering_ui, filtering_server]
 )
 
@@ -48,7 +48,7 @@ ui <- function(id) {
   ns <- NS(id)
   page1 <- dataview_ui(ns("dataview"))
   page2 <- filtering_ui(ns("filtering"))
-  page3 <- varselection_ui(ns("varselection"))
+  page3 <- varexplore_ui(ns("varselection"))
   # page4 <- mod_subgroup_ui("subgroup")
   # page5 <- mod_gentableone_ui("gentableone")
 
@@ -79,8 +79,8 @@ server <- function(id) {
     id,
     function(input, output, session) {
       raw_dataset <- dataview_server("dataview") #select variables
-      filtering_server("filtering", dat=raw_dataset) # filtering
-      varselected_dataset <- varselection_server("varselection", dat=raw_dataset)
+      filtered_data <- filtering_server("filtering", dat=raw_dataset) # filtering
+      varexplore_server("varselection", dat=filtered_data) #explore the variables
       # mod_subgroup_server("subgroup")
       # mod_gentableone_server("gentableone")
   })

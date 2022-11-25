@@ -29,7 +29,7 @@ box::use(
 global_data <- reactiveVal(NULL)
 
 #' @export
-varselection_ui <- function(id) {
+varexplore_ui <- function(id) {
   ns <- NS(id)
   tagList(
     titlePanel("选择变量"),
@@ -40,34 +40,32 @@ varselection_ui <- function(id) {
       ),
 
       mainPanel(
-        verbatimTextOutput(ns("summary")),
-        plotOutput(ns("ggpairs"))
+        div(id = "dv_statistic",
+            wellPanel(
+              plotOutput(ns("ggpairs"))
+            )
+        ),
+        verbatimTextOutput(ns("summary"))
       )
     )
   )
 }
 
 #' @export
-varselection_server <- function(id, dat) {
+varexplore_server <- function(id, dat) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
 
     dataset <- reactiveValues()
 
-    # observeEvent(input$go, {
-    #   message("go")
-    #   updateVarSelectInput(
-    #     session,
-    #     "variables",
-    #     data = dat())
-    # })
-
     observeEvent(dat(), {
         updateVarSelectInput(
           session,
           "variables",
-          data = dat())
-    })
+          data = dat()
+        )
+      }
+    )
 
     output$summary <- renderPrint(str(dat()))
 
@@ -80,6 +78,6 @@ varselection_server <- function(id, dat) {
       ggpairs(dataset$selected)
     })
 
-    return(reactive(dataset$selected))
+    return(dat)
   })
 }
